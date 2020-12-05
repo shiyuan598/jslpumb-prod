@@ -3,6 +3,9 @@ module.exports = {
   env: {
     node: true
   },
+  globals: {
+    jsPlumb: true
+  },
   extends: [
     'plugin:vue/essential',
     '@vue/standard'
