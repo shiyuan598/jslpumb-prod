@@ -1,15 +1,31 @@
 <template>
-  <div class="container" id="canvas">
-    <div class="node" :class="item.status|getStatusEnName" :style="item.style" :key="index" @click="handleClick(item)" v-for="(item, index) in charts.nodes">
-      <el-popover placement="top-start" :title="item.name" width="300" trigger="hover">
-        <p>副本：{{item.duplicate}}</p>
-        <p>计算任务：{{item.task}}</p>
-        <p>资源：{{item.resource}}</p>
-        <el-button size="mini" type="text" @click="openUrl(item.url)">走一个</el-button>
-        <span slot="reference"><i :class="item.status|getStatusIcon"></i>{{item.name}}</span>
-      </el-popover>
+    <div class="container">
+        <div class="aside">
+            <div class="node running">
+                <span><i class="el-icon-loading"></i>运行中</span>
+            </div>
+            <div class="node waiting">
+                <span><i class="el-icon-s-tools"></i>等待中</span>
+            </div>
+            <div class="node success">
+                <span><i class="el-icon-circle-check"></i>成功</span>
+            </div>
+            <div class="node error">
+                <span><i class="el-icon-circle-close"></i>失败</span>
+            </div>
+        </div>
+        <div class="main" id="canvas">
+            <div class="node" :class="item.status|getStatusEnName" :style="item.style" :key="index" @click="handleClick(item)" v-for="(item, index) in charts.nodes">
+                <el-popover placement="top-start" :title="item.name" width="300" trigger="hover">
+                    <p>副本：{{item.duplicate}}</p>
+                    <p>计算任务：{{item.task}}</p>
+                    <p>资源：{{item.resource}}</p>
+                    <el-button size="mini" type="text" @click="openUrl(item.url)">走一个</el-button>
+                    <span slot="reference"><i :class="item.status|getStatusIcon"></i>{{item.name}}</span>
+                </el-popover>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -220,7 +236,7 @@ export default {
         ],
         DragOptions: { cursor: 'pointer', zIndex: 2000 },
         PaintStyle: { stroke: color, strokeWidth: 2 },
-        EndpointStyle: { radius: 0.01, fill: color },
+        EndpointStyle: { radius: 2, fill: color },
         HoverPaintStyle: { stroke: color },
         EndpointHoverStyle: { fill: color },
         Container: 'canvas'
@@ -251,47 +267,8 @@ export default {
     })
   },
   methods: {
-    getStatusEnName (status) {
-      let enName = ''
-      switch (status) {
-        case 0:
-          enName = 'waiting'
-          break
-        case 1:
-          enName = 'running'
-          break
-        case 2:
-          enName = 'success'
-          break
-        case 3:
-          enName = 'error'
-          break
-      }
-      return enName
-    },
-    getStatusZhName (status) {
-      let zhName = ''
-      switch (status) {
-        case 0:
-          zhName = '等待中'
-          break
-        case 1:
-          zhName = '运行中'
-          break
-        case 2:
-          zhName = '成功'
-          break
-        case 3:
-          zhName = '失败'
-          break
-      }
-      return zhName
-    },
     handleClick() {
       console.info('click')
-    },
-    handleMouseenter() {
-      console.info('mouseenter')
     },
     openUrl() {
       window.open('https://element.eleme.cn/#/zh-CN/component/installation')
@@ -302,85 +279,84 @@ export default {
 
 <style scoped lang="scss">
 .container {
-  position: relative;
-  border: 1px solid #efefef;
-  height: 60%;
-  width: 60%;
-  top: 10%;
-  left: 50%;
-  transform: translate(-50%, 0);
-  display: flex;
-  justify-content: space-around;
-  padding: 30px;
-  .node {
-    font-size: 14px;
-    position: absolute;
-    box-sizing: content-box;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    border-radius: 3px;
-    padding: 0 8px;
-  }
-  .node:nth-child(1) {
-    left: 30px;
-    top: 200px;
-  }
-  .node:nth-child(2) {
-    left: 200px;
-    top: 200px;
-  }
-  .node:nth-child(3) {
-    left: 400px;
-    top: 200px;
-  }
-  .node:nth-child(4) {
-    left: 600px;
-    top: 200px;
-  }
-  .node:nth-child(5) {
-    left: 800px;
-    top: 200px;
-  }
-  $runningColor: #409eff;
-  .running {
-    color: $runningColor;
-    border: 1px solid $runningColor;
-    background-color: #ecf5ff;
-    &:hover {
-      color: #fff;
-      background-color: $runningColor;
+    height: calc(100% - 30px);
+    width: calc(100% - 30px);
+    padding: 15px;
+    display: flex;
+    .aside {
+        width: 170px;
+        margin-right: 15px;
+        border: 1px solid #ecf5ff;
+        padding: 25px;
+        * + * {
+            margin-top: 15px;
+        }
+        .node {
+            font-size: 14px;
+            box-sizing: content-box;
+            width: 120px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            border-radius: 3px;
+            padding: 0 8px;
+        }
     }
-  }
-  $successColor: #67c23a;
-  .success {
-    color: $successColor;
-    border: 1px solid $successColor;
-    background-color: #f0f9eb;
-    &:hover {
-      color: #fff;
-      background-color: $successColor;
+    .main {
+        position: relative;
+        width: calc(100% - 170px - 15px);
+        border: 1px solid #ecf5ff;
+        .node {
+            font-size: 14px;
+            position: absolute;
+            box-sizing: content-box;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 3px;
+            padding: 0 8px;
+        }
     }
-  }
-  $errorColor: #f56c6c;
-  .error {
-    color: $errorColor;
-    border: 1px solid $errorColor;
-    background-color: #fef0f0;
-    &:hover {
-      color: #fff;
-      background-color: $errorColor;
+
+    $runningColor: #409eff;
+    .running {
+        color: $runningColor;
+        border: 1px solid $runningColor;
+        background-color: #ecf5ff;
+        &:hover {
+            color: #fff;
+            background-color: $runningColor;
+        }
     }
-  }
-  $waitingColor: #909399;
-  .waiting {
-    color: $waitingColor;
-    border: 1px solid $waitingColor;
-    background-color: #f4f4f5;
-    &:hover {
-      color: #fff;
-      background-color: $waitingColor;
+    $successColor: #67c23a;
+    .success {
+        color: $successColor;
+        border: 1px solid $successColor;
+        background-color: #f0f9eb;
+        &:hover {
+            color: #fff;
+            background-color: $successColor;
+        }
     }
-  }
+    $errorColor: #f56c6c;
+    .error {
+        color: $errorColor;
+        border: 1px solid $errorColor;
+        background-color: #fef0f0;
+        &:hover {
+            color: #fff;
+            background-color: $errorColor;
+        }
+    }
+    $waitingColor: #909399;
+    .waiting {
+        color: $waitingColor;
+        border: 1px solid $waitingColor;
+        background-color: #f4f4f5;
+        &:hover {
+            color: #fff;
+            background-color: $waitingColor;
+        }
+    }
 }
 </style>
