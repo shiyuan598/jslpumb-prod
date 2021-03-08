@@ -4,7 +4,8 @@ module.exports = {
     node: true
   },
   globals: {
-    jsPlumb: true
+    jsPlumb: true,
+    $: true
   },
   extends: [
     'plugin:vue/essential',

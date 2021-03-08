@@ -1,18 +1,29 @@
 <template>
     <div class="container">
         <div class="aside">
-            <div class="node running">
-                <span><i class="el-icon-loading"></i>运行中</span>
+            <div class="warp">
+                <div class="node running">
+                    <span><i class="el-icon-loading"></i>运行中</span>
+                </div>
             </div>
-            <div class="node waiting">
-                <span><i class="el-icon-s-tools"></i>等待中</span>
+            <div class="warp">
+                <div class="node waiting">
+                    <span><i class="el-icon-s-tools"></i>等待中</span>
+                </div>
             </div>
-            <div class="node success">
-                <span><i class="el-icon-circle-check"></i>成功</span>
+
+            <div class="warp">
+                <div class="node success">
+                    <span><i class="el-icon-circle-check"></i>成功</span>
+                </div>
             </div>
-            <div class="node error">
-                <span><i class="el-icon-circle-close"></i>失败</span>
+
+            <div class="warp">
+                <div class="node error">
+                    <span><i class="el-icon-circle-close"></i>失败</span>
+                </div>
             </div>
+
         </div>
         <div class="main" id="canvas">
             <div class="node" :class="item.status|getStatusEnName" :style="item.style" :key="index" @click="handleClick(item)" v-for="(item, index) in charts.nodes">
@@ -263,6 +274,50 @@ export default {
             reattach: false
           })
         })
+      })
+
+      $('.aside .node').draggable(
+        {
+          scope: 'plant',
+          helper: 'clone',
+          containment: $('.container')
+        }
+      )
+
+      $('#canvas').droppable({
+        scope: 'plant',
+        drop: function(ev, ui) {
+          console.log(ev, ui)
+
+          const id = 'item' + new Date().getTime()
+          const html = `<div class="node running" style={ left: "200px", top: "100px"}>
+                    <span><i class="el-icon-loading"></i>运行中</span>
+                </div>`
+          console.info(html)
+          $(this).append('<div class="node waiting jtk-managed jtk-draggable jtk-endpoint-anchor jtk-connected" style="left: 100px; top: 200px;"><span data-v-9c9301d8=""><div role="tooltip" id="el-popover-6222" aria-hidden="true" class="el-popover el-popper" tabindex="0" style="width: 300px; display: none;"><div class="el-popover__title">等待中</div><p data-v-9c9301d8="">副本：1创建中，1运行中</p><p data-v-9c9301d8="">计算任务：共10个，3运行中，7等待</p><p data-v-9c9301d8="">资源：CPU:3.4GHz RAM:32G GPU:8G</p><button data-v-9c9301d8="" type="button" class="el-button el-button--text el-button--mini"><!----><!----><span>走一个</span></button></div><span class="el-popover__reference-wrapper"><span data-v-9c9301d8="" class="el-popover__reference" aria-describedby="el-popover-6222" tabindex="0"><i data-v-9c9301d8="" class="el-icon-s-tools"></i>等待中;lg;dlgl;lg;ldsflg;</span></span></span></div>')
+          //   $('#' + id).css({
+          //     top: ui.position.top + 'px',
+          //     left: ui.position.left + 'px'
+          //   })
+          //   addEndpoints(
+          //     id,
+          //     ['RightMiddle', 'BottomCenter'],
+          //     ['LeftMiddle', 'TopCenter']
+          //   )
+
+          /* jsPlumb.addEndpoint(id, { anchors: "TopCenter" });
+          jsPlumb.addEndpoint(id, { anchors: "RightMiddle" });
+          jsPlumb.addEndpoint(id, { anchors: "BottomCenter" });
+          jsPlumb.addEndpoint(id, { anchors: "LeftMiddle" }); */
+
+          /* instance.draggable(jsPlumb.getSelector("#" + id), {
+            containment: "parent"
+          }); */
+          instance.draggable(id, {
+            grid: [1, 1]
+            // containment: true
+          })
+        }
       })
     })
   },
