@@ -26,15 +26,6 @@
 
         </div>
         <div class="main" id="canvas">
-            <!-- <div class="node waiting">
-                <span><i class="el-icon-s-tools"></i>春风吹不倒</span>
-            </div> -->
-            <div class="node waiting" style="left: 60px; top: 200px">
-                <span><i class="el-icon-s-tools"></i>桃花源</span>
-            </div>
-            <!-- <div class="node" :class="item.status|getStatusEnName" :style="item.style" :key="index" v-for="(item, index) in charts.nodes">
-                <span><i :class="item.status|getStatusIcon"></i>{{item.name}}</span>
-            </div> -->
         </div>
     </div>
 </template>
@@ -200,118 +191,132 @@ export default {
     }
   },
   mounted() {
-    $('.aside .warp').draggable({
-      scope: 'plant',
-      helper: 'clone',
-      containment: $('.container')
-    })
-
-    $('#canvas').droppable({
-      scope: 'plant',
-      drop: function(ev, ui) {
-        const left = ui.position.left - 240 + 'px'
-        const top = ui.position.top - 15 + 'px'
-        const html = `<div style="left: ${left}; top: ${top}" + ${ui.helper.html().substr(4)}`
-        $(this).append(html)
-      }
-    })
-
     // const that = this
-    // jsPlumb.ready(function() {
-    //   const color = '#a0cfff'
-    //   const instance = jsPlumb.getInstance({
-    //     Connector: ['Bezier', { curviness: 50 }],
-    //     ConnectionOverlays: [
-    //       [
-    //         'Arrow',
-    //         {
-    //           location: 1,
-    //           visible: true,
-    //           width: 11,
-    //           length: 11,
-    //           id: 'ARROW',
-    //           events: {
-    //             click: function() {
-    //             }
-    //           }
-    //         }
-    //       ]
-    //     ],
-    //     DragOptions: { cursor: 'pointer', zIndex: 2000 },
-    //     PaintStyle: { stroke: color, strokeWidth: 2 },
-    //     EndpointStyle: { radius: 2, fill: color },
-    //     HoverPaintStyle: { stroke: color },
-    //     EndpointHoverStyle: { fill: color },
-    //     Container: 'canvas'
-    //   })
+    jsPlumb.ready(function() {
+      const color = '#7AB02C'
+      const instance = jsPlumb.getInstance({
+        Connector: ['Bezier', { curviness: 50 }],
+        ConnectionOverlays: [
+          [
+            'Arrow',
+            {
+              location: 1,
+              visible: true,
+              width: 11,
+              length: 11,
+              id: 'ARROW',
+              events: {
+                click: function() {
+                }
+              }
+            }
+          ]
+        ],
+        DragOptions: { cursor: 'pointer', zIndex: 2000 },
+        PaintStyle: { stroke: color, strokeWidth: 2 },
+        EndpointStyle: { radius: 2, fill: color },
+        HoverPaintStyle: { stroke: color },
+        EndpointHoverStyle: { fill: color },
+        Container: 'canvas'
+      })
 
-    //   instance.batch(() => {
-    //     const nodes = jsPlumb.getSelector('#canvas .node')
-    //     instance.draggable(nodes)
-    //     for (let i = 0; i < nodes.length; i++) {
-    //       that.charts.nodes[i].endPoints.forEach(ele => {
-    //         instance.addEndpoint(nodes[i], {
-    //           uuid: ele.uuid,
-    //           anchor: ele.anchor,
-    //           isSource: true,
-    //           isTarget: true,
-    //           maxConnections: -1
-    //         })
-    //       })
-    //     }
-    //     that.charts.conections.forEach(ele => {
-    //       instance.connect({
-    //         uuids: ele,
-    //         detachable: false,
-    //         reattach: false
-    //       })
-    //     })
-    //   })
+      // source endpoints
+      const sourceEndpoint = {
+        endpoint: 'Dot',
+        paintStyle: {
+          stroke: '#7AB02C',
+          fill: 'transparent',
+          radius: 3,
+          strokeWidth: 1
+        },
+        isSource: true,
+        connector: [
+          'Bezier',
+          {
+            stub: [40, 60],
+            gap: 10,
+            cornerRadius: 5,
+            alwaysRespectStubs: true
+          }
+        ],
+        dragOptions: {},
+        overlays: [
+          [
+            'Label',
+            {
+              location: [0.5, 1.5],
+              label: 'Drag',
+              cssClass: 'endpointSourceLabel',
+              visible: false
+            }
+          ]
+        ]
+      }
+      // target endpoints
+      const targetEndpoint = {
+        endpoint: 'Dot',
+        paintStyle: { fill: '#7AB02C', radius: 3 },
+        maxConnections: -1,
+        dropOptions: { hoverClass: 'hover', activeClass: 'active' },
+        isTarget: true,
+        overlays: [
+          [
+            'Label',
+            {
+              location: [0.5, -0.5],
+              label: 'Drop',
+              cssClass: 'endpointTargetLabel',
+              visible: false
+            }
+          ]
+        ]
+      }
 
-    //   $('.aside .node').draggable(
-    //     {
-    //       scope: 'plant',
-    //       helper: 'clone',
-    //       containment: $('.container')
-    //     }
-    //   )
+      $('.aside .warp').draggable({
+        scope: 'plant',
+        helper: 'clone',
+        containment: $('.container')
+      })
 
-    //   $('#canvas').droppable({
-    //     scope: 'plant',
-    //     drop: function(ev, ui) {
-    //       console.log(ev, ui)
-
-    //       const id = 'item' + new Date().getTime()
-    //       const html = `<div class="node waiting" style="left: 40px; top: 160px">
-    //             <span><i class="el-icon-s-tools"></i>春风吹不倒</span>
-    //         </div>`
-    //       console.info(html)
-    //       $(this).append(html)
-    //       //   $('#' + id).css({
-    //       //     top: ui.position.top + 'px',
-    //       //     left: ui.position.left + 'px'
-    //       //   })
-    //       //   addEndpoints(
-    //       //     id,
-    //       //     ['RightMiddle', 'BottomCenter'],
-    //       //     ['LeftMiddle', 'TopCenter']
-    //       //   )
-
-    //       /* jsPlumb.addEndpoint(id, { anchors: "TopCenter" });
-    //       jsPlumb.addEndpoint(id, { anchors: "RightMiddle" });
-    //       jsPlumb.addEndpoint(id, { anchors: "BottomCenter" });
-    //       jsPlumb.addEndpoint(id, { anchors: "LeftMiddle" }); */
-
-    //       /* instance.draggable(jsPlumb.getSelector("#" + id), {
-    //         containment: "parent"
-    //       }); */
-    //       instance.draggable(id, {
-    //         grid: [1, 1]
-    //         // containment: true
-    //       })
-    //     }
-    //   })
-    // })
+      $('#canvas').droppable({
+        scope: 'plant',
+        drop: function(ev, ui) {
+          const left = ui.position.left - 240 + 'px'
+          const top = ui.position.top - 15 + 'px'
+          const id = 'node' + new Date().getTime()
+          const html = `<div id=${id} style="left: ${left}; top: ${top}" + ${ui.helper.html().substr(4)}`
+          $(this).append(html)
+          instance.addEndpoint(id, sourceEndpoint, {
+            anchor: 'RightMiddle',
+            uuid: id + 'RightMiddle',
+            isSource: true,
+            maxConnections: -1
+          })
+          instance.addEndpoint(id, sourceEndpoint, {
+            anchor: 'BottomCenter',
+            uuid: id + 'BottomCenter',
+            isSource: true,
+            maxConnections: -1
+          })
+          instance.addEndpoint(id, targetEndpoint, {
+            anchor: 'LeftMiddle',
+            uuid: id + 'LeftMiddle',
+            isTarget: true,
+            maxConnections: -1
+          })
+          instance.addEndpoint(id, targetEndpoint, {
+            anchor: 'TopCenter',
+            uuid: id + 'TopCenter',
+            isTarget: true,
+            maxConnections: -1
+          })
+          instance.draggable(id, {
+            grid: [1, 1],
+            containment: true
+          })
+        }
+      })
+    })
   },
   methods: {
     handleClick() {
